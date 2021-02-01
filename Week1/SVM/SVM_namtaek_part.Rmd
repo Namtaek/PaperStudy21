@@ -1,0 +1,88 @@
+---
+title: "SVM"
+author: "Kwon Namtaek"
+date: '2021 1 17 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 4. Non-linear & Non-seperable
+
+### 고차원 매핑
+
+지금까지 Linear & Seperable, Linear & Non-seperable의 경우들에 대해 어떻게 svm의 목적식과 제약식에서 최적화를 할 수 있는지를 보았다. 하지만 맨 처음 언급했듯이, 선형 초평면으로는 $\mathbb{R}^d$상에서 $d+1$개의 점만 shatter할 수 있다. 가장 간단한 예로 2차원에서 선형분류기는 XOR 문제를 풀 수 없다. 우리가 다뤄야 할 점(관측값)은 그것보다 훨씬 더 많이 때문에, 비선형 분리의 필요성이 생긴다. 그래서 우리는 현재 차원 $\mathbb{R}^d$을 고차원 $\mathbb{R}^D, \: D >> d$으로 대응시켜 고차원 $\mathbb{R}^D$ 상에서 선형으로 분리하려 한다. 2차원에서 이차항까지 고려하는 고차원으로 매핑하는 예시를 들어보자.
+
+$$
+\Phi:(\mathbf{x_1}, \mathbf{x_2}) \rightarrow (\mathbf{x_1}^2, \mathbf{x_2}^2, \sqrt{2}\mathbf{x_1}, \sqrt{2}\mathbf{x_2},\sqrt{2}\mathbf{x_1}\mathbf{x_2}, 1)
+$$
+
+```{r, echo = FALSE, fig.cap = 'High-Dimensional Mapping ', fig.align='center', out.width='80%'}
+knitr::include_graphics('High-Dimensional Mapping.png')
+# 고차원 매핑
+```
+
+위에서 $(\mathbf{x_1}\mathbf{x_2},\: \: \mathbf{x_2})$축에서 선형으로 나타나듯이, 변수들이 고차원에서는 선형으로 분리되는 형태가 존재할 수 있다. 정확히 언제 선형으로 분리되는지는 모르지만, 매핑할 뿐이다. 그래서 우리의 목표는 현재 데이터를 잘 분리할 수 있는 유연한(Flexible)한 분류기를 만듬과 동시에, Margin을 최대화 함으로써 분류의 일반화 성능을 높여야 한다. 이를 목적함수와 제약식으로 나타내면, 이전과 매우 유사한 형태이다.
+
+$$
+\begin{aligned}
+min & \quad \frac{1}{2}||\mathbf{w}||^2 + C \sum_{i=1}^{n}\xi_i \\
+s.t. & \quad y_i(\mathbf{w}^T\Phi(\mathbf{x_i})+b) \geq 1-\xi_i, \:\: \xi_i \geq 0
+\end{aligned}
+$$
+
+이전에는 입력공간 $\mathbf{x}$ 자체에서 제약식을 다뤘다면, 이제는 매핑된 입력공간 $\Phi(\mathbf{x})$에서 제약식을 다루는 것이 다르다. 하지만 이에따라 달라지는 것은 없다! 똑같이 라그랑지안을 통해 듀얼문제로 변형하게 되면 다음과 같다.
+
+$$
+\begin{aligned}
+max \quad& L_D=\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n}\alpha_i \alpha_j y_i y_j \Phi(\mathbf{x_i})\Phi(\mathbf{x_j}) \\
+&s.t. \:\:\:\sum_{i=1}^{n}\alpha_iy_i=0, \:\: 0 \leq \alpha_i \leq C
+\end{aligned}
+$$
+
+### Kernel Trick
+
+그런데 우리가 직접 $\Phi(\mathbf{x})$를 매핑하고, 다시 내적 $\Phi(\mathbf{x_i})\Phi(\mathbf{x_j})$를 계산하는 일은 쉬운일이 아니다. 그렇다면 직접 내적을 계산하지 않고, 내적이 계산된 내적공간의 함수로서 $\Phi(\mathbf{x_i})\Phi(\mathbf{x_j})=K(\mathbf{x_i},\mathbf{x_j})$로서 문제를 바꾼다면 엄청나게 큰 계산비용을 절감할 수 있다. 이런 방법을 **Kernel Trick**이라 한다.
+
+이런 커널 트릭의 장점은
+
+1) 엄청나게 계산비용을 절감할 수 있다는 점
+2) 특정 조건(Mercer's Condition)만 만족하면 여전히 수학적으로 문제가 없이 linear svm처럼 다룰 수 있다는 점이다.
+
+Mercer's Condition은 SVM의 커널 함수가 가져야하는 조건이다. 이는 커널함수 $K(\mathbf{x_i}, \mathbf{x_j})$를 기존 $\mathbf{x}$의 매핑함수인 $\Phi(\mathbf{x})$의 내적공간 $\Phi(\mathbf{x_i})\Phi(\mathbf{x_j})$으로 다룰 수 있어야 함과 연관된다. 우리가 내적을 했을 때, 내적 순서를 바꾼다고 해서 값이 변하지 않고, 내적값은 언제나 0보다 크거나 같다. 이 조건을 해당 함수가 만족하면 된다. 따라서, 커널함수는 다음의 조건을 만족하면 된다.
+
+$$
+\begin{aligned}
+1)& \: K(\mathbf{x_i}, \mathbf{x_j})=K(\mathbf{x_j}, \mathbf{x_i}) \quad\quad\:\: (symmetic) \\
+2)& \: K(\mathbf{x_i}, \mathbf{x_j}) \geq 0,  \quad\quad\quad\quad\quad\:\, (positive\:\: semi-definite)
+\end{aligned}
+$$
+
+### Canonical Kernel
+
+그래서 많이 쓰이는 커널을 살펴보게 되면 보통 다음의 커널을 많이 사용한다.
+
+$$
+\begin{aligned}
+Polynomial :& \quad K(x,y)=(x \cdot y+c)^p, \:\:c>0                        \\
+Gaussian(RBF) :& \quad K(x,y)=exp(-\frac{||x-y||^2}{2\sigma^2}), \:\:\sigma \neq 0
+\end{aligned}
+$$
+
+$\mathbf{x} \in \mathbb{R}^d$를 $\mathbb{R}^D$로 보내는 polynomial mapping $\Phi(\mathbf{x}) \in \mathbb{R}^D$를 생각하자. 이때 Polynomial Kernel의 차원은 ${d+p-1}\choose{p}$가 된다. 즉 변수가 10개 있고 5차항까지 확장시킨다면, $\mathbb{R}^{10} \rightarrow \mathbb{R}^{2002}$가 된다. 이 과정에서 각각 변수의 교차항과 상호작용항들이 자연스럽게 고려되기 때문에, 굳이 svm에서는 이런 고차항이나 상호작용항을 직접 넣어줄 필요가 없다. 다음의 예시를 확인하면, 차수를 높임에 따라 더 유연(flexible)한 분류를 할 수 있지만, 동시에 margin이 늘어나서 일반화 정도가 높아짐을 확인할 수 있다.
+
+```{r, echo = FALSE, fig.cap = 'Example of Polynomial Kernel ', fig.align='center', out.width='80%'}
+knitr::include_graphics('Example of Polynomial Kernel.png')
+# Polynomial Kernel
+```
+
+Gaussian 커널은 이런 계산조차 불가능하게 무한차원으로 매핑한다. 왜냐하면 $exp$ 함수는 테일러 근사를 하면 유한차수 다항함수의 합으로 무한하게 표현되기 때문이다. 다음의 예시를 보면 가우시안 커널의 $\gamma=\frac{1}{\sigma^2}$ 값을 조정함에 따라 결정되는 hyperplane초평면을 보여준다. $\gamma$ 값을 키울수록, 더 복잡한 초평면이 나오고, 이는 곧 더 초고차원상에서 선형분리함을 의미한다. 이 복잡도를 높이고 높이면, 우리의 모든 $n$개의 관측치를 shatter할수도 있다.(zero-training error)
+
+```{r, echo = FALSE, fig.cap = 'Example of Gaussian Kernel ', fig.align='center', out.width='70%'}
+knitr::include_graphics('Example of Gaussian Kernel.png')
+# Gaussian Kernel
+```
+
+그래서 우리의 최종 분류기는 $f(\mathbf{x})=sign(\sum_{}^{}\alpha_i y_i K(\mathbf{x_i},\mathbf{x_j})+b)$를 통해 결정된다.
