@@ -40,3 +40,10 @@
   - Support Vector Data Description
 - Isolation Forest : 김원구, 김재희, 오정민
   - Isolation Forest
+  
+4) 4회차 (2월 16일)
+
+- Attention(Transformer) : 권남택, 김민정, 김재희
+  - Attention is all you need
+- Variational Inference : 김원구, 오정민, 유경민
+  - Variational Inference : a Review for Statistician
