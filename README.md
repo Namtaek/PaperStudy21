@@ -47,3 +47,17 @@
   - Attention is all you need
 - Variational Inference : 김원구, 오정민, 유경민
   - Variational Inference : a Review for Statistician
+  
+5) 5회차 (2월 23일)
+
+- LOF(Local Outlier Factor) : 권남택, 오정민, 유경민
+  - LOF: Identifying Density-Based Local Outliers
+- Imagenet : 김민정, 김원구, 김재희
+  - Imagenet classification with deep convolutional neural networks
+  
+6) 6회차 (3월 09일)
+
+- SVR/KFDA/KPCA : 권남택, 오정민, 유경민
+  - An Introduction to Kernel-based Learning Algorithms (IEEE)
+- Zero-shot Learning : 김민정, 김원구, 김재희
+  - Zero-shot learning through cross-modal transfer (NIPS)
