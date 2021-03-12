@@ -1,7 +1,7 @@
 
 ## 2021년 1학기 P-Sat 논문 스터디
 
-성균관대학교 통계분석학회 P-Sat 출신 학회원들이 논문 스터디를 시작했습니다. 논문은 고려대학교 강필성 교수님 연구실의 [논문리스트](https://www.notion.so/c3b3474d18ef4304b23ea360367a5137?v=5d763ad5773f44eb950f49de7d7671bd)를 사용해서, 각자 관심있는 분야의 논문들을 가져와서 스터디를 진행하고 있습니다.
+성균관대학교 통계분석학회 P-Sat 출신 학회원들이 논문 스터디를 시작했습니다. 논문은 고려대학교 강필성 교수님 연구실의 [논문리스트](https://www.notion.so/c3b3474d18ef4304b23ea360367a5137?v=5d763ad5773f44eb950f49de7d7671bd)를 사용해서, 각자 관심있는 분야의 논문들을 가져와서 스터디를 진행하고 있습니다. 추가적으로 다른 주제의 논문(e.g. SHAP, ...)도 다룰 예정입니다.
 
 -------------------------------------------
 
@@ -55,9 +55,16 @@
 - Imagenet : 김민정, 김원구, 김재희
   - Imagenet classification with deep convolutional neural networks
   
-6) 6회차 (3월 09일)
+6) 6회차 (3월 11일)
 
 - SVR/KFDA/KPCA : 권남택, 오정민, 유경민
   - An Introduction to Kernel-based Learning Algorithms (IEEE)
 - Zero-shot Learning : 김민정, 김원구, 김재희
   - Zero-shot learning through cross-modal transfer (NIPS)
+
+7) 7회차 (3월 23일)
+
+- PageRank : 권남택, 김민정, 유경민
+  - The PageRank citation ranking: Bringing order to the web
+- Boosting(Ada) : 김원구, 김재희, 오정민
+  - A short introduction to boosting
